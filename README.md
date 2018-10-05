@@ -10,4 +10,6 @@ Todos los diseños que usaremos con ejemplos clásicos de pedales, disponibles e
 
 Lista de pedales:
 
-- Bazz Fuss
+- [Bazz Fuss](https://github.com/fede2cr/pedales/tree/master/bazz%20fuss)
+
+![Prototipo de Bazz Fuss](https://github.com/fede2cr/pedales/blob/master/bazz%20fuss/img/prototipo%20bazz%20fuss.jpg)
