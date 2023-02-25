@@ -1,10 +1,15 @@
+'''
+It downloads a video from youtube, extracts the audio and some other
+information from it. The usage of glob is just for temp testing.
+'''
+
 import glob
 import os
 import yt_dlp
 
-vId = 'ESc2Tq2HzhQ'
+VID = 'ESc2Tq2HzhQ'
 
-URL = 'https://www.youtube.com/watch?v='+ vId
+URL = 'https://www.youtube.com/watch?v='+ VID
 ydl_opts = {
     'format': 'vorbis/bestaudio/best',
     'quiet': 'True',
@@ -22,4 +27,3 @@ filename = os.path.splitext(tmp_filename)[0] + '.ogg'
 print(os.lstat(filename))
 print(glob.glob('*.ogg').count())
 os.unlink(filename)
-
