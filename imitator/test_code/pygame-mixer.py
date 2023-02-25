@@ -3,6 +3,8 @@ Test code for the pygame mixer library.
 
 You need to have present the files 'bass.wav', 'drums.wav',
 'other.wav' and 'vocals.wav' inside test_data/
+
+Note: using the music class can only handle one at a time.
 '''
 
 import time
@@ -23,6 +25,11 @@ vocals.play()
 other.play()
 bass.set_volume(0.7)
 drums.set_volume(0.7)
+
+time.sleep(5)
+mixer.pause()
+time.sleep(2)
+mixer.unpause()
 
 while mixer.get_busy():
     print('.', end='')

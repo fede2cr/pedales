@@ -1,5 +1,8 @@
 # TODO para imitator
 
+- [x] test code para mezclar los 4 canales con diferentes volúmen, y posibilidad de cambiar el volumen durante play. Play y pausa.
+- [x] test code para descargar audio de youtube, tomar nombre de canción
+
 - [ ] azure function que recibe yt-videoID, extrae el audio, y lo separa con demux, retorna la lista de archivos procesados
 - [ ] mangopi con interfaz web, la cual envía yt-videoID, aceptar renorno de lista de 4 archivos y los descarga
 - [ ] mangopi con blinka (alpha en raspberry)
