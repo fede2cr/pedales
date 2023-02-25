@@ -31,6 +31,11 @@ mixer.pause()
 time.sleep(2)
 mixer.unpause()
 
+time.sleep(20)
+other_volume_before_mute=other.get_volume()
+other.set_volume(0)
+time.sleep(10)
+other.set_volume(other_volume_before_mute)
 while mixer.get_busy():
     print('.', end='')
     time.sleep(1)
