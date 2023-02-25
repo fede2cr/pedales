@@ -16,6 +16,12 @@ With this pedal you can plug it separately to a PA or speakers two have better a
 
 ## Limitations
 
+### Guitar and other instruments
+
 The un-mix technology is provided by the free software from Facebook called [demucs](https://github.com/facebookresearch/demucs) which currently splits the audio in four channels: voice, bass, drums and **others**. This means that the guitar audio will be split combined with other instruments such as keyboards, winds, brass and others, which means that some songs that have heavy use of this sounds, will have it removed if you mute the "guitar" (called "others") channel.
 
 There is experimental training that can be used to teach the demucs software to remove only the guitar, but it does not work as good as it does for bass, drums or vocals.
+
+### Rotary encoders
+
+Also, the rotary encoders can only read when they change, not where they are. So it is recommended that before starting a playing session, to turn the knobs to "12" to indicate 100% volume.
