@@ -16,100 +16,159 @@ from adafruit_seesaw import neopixel, seesaw, rotaryio, digitalio
 mixer.init()
 i2c = board.I2C()
 
-seesaw0 = seesaw.Seesaw(i2c, addr=0x36)
-seesaw1 = seesaw.Seesaw(i2c, addr=0x37)
+drums_ss = seesaw.Seesaw(i2c, addr=0x36)
+bass_ss = seesaw.Seesaw(i2c, addr=0x37)
+vocals_ss = seesaw.Seesaw(i2c, addr=0x38)
+other_ss = seesaw.Seesaw(i2c, addr=0x39)
 
-seesaw0.pin_mode(24, seesaw0.INPUT_PULLUP)
-button0 = digitalio.DigitalIO(seesaw0, 24)
-button0_held = False
-pixel0 = neopixel.NeoPixel(seesaw0, 6, 1)
-pixel0.brightness = 0.5
-color0 = 0
-encoder0 = rotaryio.IncrementalEncoder(seesaw0)
-last_position0 = None
+drums_ss.pin_mode(24, drums_ss.INPUT_PULLUP)
+drums_button = digitalio.DigitalIO(drums_ss, 24)
+drums_button_held = False
+drums_pixel = neopixel.NeoPixel(drums_ss, 6, 1)
+drums_pixel.brightness = 0.5
+drums_color = 255
+drums_encoder = rotaryio.IncrementalEncoder(drums_ss)
+drums_last_position = None
+drums_mutted = False
+drums_volume = 100
 
-seesaw1.pin_mode(24, seesaw1.INPUT_PULLUP)
-button1 = digitalio.DigitalIO(seesaw1, 24)
-button1_held = False
-pixel1 = neopixel.NeoPixel(seesaw1, 6, 1)
-pixel1.brightness = 0.5
-color1 = 0
-encoder1 = rotaryio.IncrementalEncoder(seesaw1)
-last_position1 = None
-
-print(mixer.get_num_channels())
-print(mixer.get_busy())
-
-bass = mixer.Sound(file='test_data/bass.wav')
-drums = mixer.Sound(file='test_data/drums.wav')
-vocals = mixer.Sound(file='test_data/vocals.wav')
-other = mixer.Sound(file='test_data/other.wav')
-bass.play()
-drums.play()
-vocals.play()
-other.play()
+bass_ss.pin_mode(24, bass_ss.INPUT_PULLUP)
+bass_button = digitalio.DigitalIO(bass_ss, 24)
+bass_button_held = False
+bass_pixel = neopixel.NeoPixel(bass_ss, 6, 1)
+bass_pixel.brightness = 0.5
+bass_color = 255
+bass_encoder = rotaryio.IncrementalEncoder(bass_ss)
+bass_last_position = None
+bass_mutted = False
+bass_volume = 100
 
 
-while True:
+vocals_ss.pin_mode(24, vocals_ss.INPUT_PULLUP)
+vocals_button = digitalio.DigitalIO(vocals_ss, 24)
+vocals_button_held = False
+vocals_pixel = neopixel.NeoPixel(vocals_ss, 6, 1)
+vocals_pixel.brightness = 0.5
+vocals_color = 255
+vocals_encoder = rotaryio.IncrementalEncoder(vocals_ss)
+vocals_last_position = None
+vocals_mutted = False
+vocals_volume = 100
 
-#1
-    # negate the position to make clockwise rotation positive
-    position0 = -encoder0.position
+other_ss.pin_mode(24, other_ss.INPUT_PULLUP)
+other_button = digitalio.DigitalIO(other_ss, 24)
+other_button_held = False
+other_pixel = neopixel.NeoPixel(other_ss, 6, 1)
+other_pixel.brightness = 0.5
+other_color = 255
+other_encoder = rotaryio.IncrementalEncoder(other_ss)
+other_last_position = None
+other_mutted = False
+other_volume = 100
 
-    if position0 != last_position0 and abs(position0) < 1000:
-        last_position0 = position0
-        print("Position0: {}".format(position0))
-        if position0 > last_position0:
-            color0 += 10
-        else:
-            color0 -= 10
-        color0 = (color0 + 256) % 256
-        pixel0.fill(colorwheel(color0))
+bass_track = mixer.Sound(file='test_data/bass.wav')
+drums_track = mixer.Sound(file='test_data/drums.wav')
+vocals_track = mixer.Sound(file='test_data/vocals.wav')
+other_track = mixer.Sound(file='test_data/other.wav')
 
-    if not button0.value and not button0_held:
-        button0_held = True
-        other_volume_before_mute=other.get_volume()
-        other.set_volume(0)
-        #other.set_volume(other_volume_before_mute)
-        print("Button0 pressed")
+bass_track.play()
+drums_track.play()
+vocals_track.play()
+other_track.play()
 
-    if button0.value and button0_held:
-        button0_held = False
-        print("Button0 released")
+drums_pixel.fill((drums_color,0,0))
+bass_pixel.fill((0,(bass_color),0))
+vocals_pixel.fill((0,0,vocals_color))
+other_pixel.fill((other_color, other_color, 0))
 
-#1
-    position1 = -encoder1.position
-
-    if position1 != last_position1 and abs(position1) < 1000:
-        last_position1 = position1
-        print("Position1: {}".format(position1))
-        if position1 > last_position1:
-            color1 += 10
-        else:
-            color1 -= 10
-        color1 = (color1 + 256) % 256
-        pixel1.fill(colorwheel(color1))
-
-    if not button1.value and not button1_held:
-        button1_held = True
-        print("Button1 pressed")
-
-    if button1.value and button1_held:
-        button1_held = False
-        print("Button1 released")
-
-bass.set_volume(0.7)
-drums.set_volume(0.7)
-
-time.sleep(5)
-mixer.pause()
-time.sleep(2)
-mixer.unpause()
-
-time.sleep(20)
 while mixer.get_busy():
-    print('.', end='')
-    time.sleep(1)
+#0: Drums
+    # negate the position to make clockwise rotation positive
+    drums_position = -drums_encoder.position
+
+    if drums_position != drums_last_position and abs(drums_position) < 1000:
+        drums_last_position = drums_position
+        print(f"Drums: {drums_position}")
+        if drums_position > drums_last_position:
+            drums_color += 10
+        else:
+            drums_color -= 10
+        drums_color = (drums_color + 256) % 256
+        drums_pixel.fill((drums_color,0,0))
+
+    if not drums_button.value and not drums_button_held:
+        if not drums_mutted:
+            drums_volume=drums_track.get_volume()
+            print("Drums mutted")
+            drums_track.set_volume(0)
+            drums_mutted = True
+            drums_pixel.fill((0,0,0))
+        else:
+            print("Drums un-mutted")
+            drums_track.set_volume(drums_volume)
+            drums_mutted = False
+            drums_pixel.fill((drums_color,0,0))
+        drums_button_held = True
+
+    if drums_button.value and drums_button_held:
+        drums_button_held = False
+
+#1: Bass
+    if not bass_button.value and not bass_button_held:
+        if not bass_mutted:
+            bass_volume=bass_track.get_volume()
+            print("Bass mutted")
+            bass_track.set_volume(0)
+            bass_mutted = True
+            bass_pixel.fill((0,0,0))
+        else:
+            print("Bass un-mutted")
+            bass_track.set_volume(bass_volume)
+            bass_mutted = False
+            bass_pixel.fill((0,(bass_color),0))
+        bass_button_held = True
+
+    if bass_button.value and bass_button_held:
+        bass_button_held = False
+
+#2: Vocals
+    if not vocals_button.value and not vocals_button_held:
+        if not vocals_mutted:
+            vocals_volume=vocals_track.get_volume()
+            print("Vocals mutted")
+            vocals_track.set_volume(0)
+            vocals_mutted = True
+            vocals_pixel.fill((0,0,0))
+        else:
+            print("Vocals un-mutted")
+            vocals_track.set_volume(vocals_volume)
+            vocals_mutted = False
+            vocals_pixel.fill((0,0,vocals_color))
+        vocals_button_held = True
+
+    if vocals_button.value and vocals_button_held:
+        vocals_button_held = False
+
+#3: Other (+guitar)
+    if not other_button.value and not other_button_held:
+        if not other_mutted:
+            other_volume=other_track.get_volume()
+            print("Other mutted")
+            other_track.set_volume(0)
+            other_mutted = True
+            other_pixel.fill((0,0,0))
+        else:
+            print("Other un-mutted")
+            other_track.set_volume(other_volume)
+            other_mutted = False
+            other_pixel.fill((other_color, other_color, 0))
+        other_button_held = True
+
+    if other_button.value and other_button_held:
+        other_button_held = False
+
+other_volume_before_mute=other_track.get_volume()
+other_track.set_volume(0)
 
 print(mixer.get_num_channels())
 
