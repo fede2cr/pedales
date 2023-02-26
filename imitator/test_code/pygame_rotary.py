@@ -7,11 +7,11 @@ You need to have present the files 'bass.wav', 'drums.wav',
 Note: using the music class can only handle one at a time.
 '''
 
-import time
 import board
-from pygame import mixer
-from rainbowio import colorwheel
+import digitalio as pigpio
 from adafruit_seesaw import neopixel, seesaw, rotaryio, digitalio
+from adafruit_debouncer import Button
+from pygame import mixer
 
 mixer.init()
 i2c = board.I2C()
@@ -43,7 +43,6 @@ bass_last_position = None
 bass_mutted = False
 bass_volume = 100
 
-
 vocals_ss.pin_mode(24, vocals_ss.INPUT_PULLUP)
 vocals_button = digitalio.DigitalIO(vocals_ss, 24)
 vocals_button_held = False
@@ -66,6 +65,13 @@ other_last_position = None
 other_mutted = False
 other_volume = 100
 
+pedal_button = pigpio.DigitalInOut(board.D21)
+pedal_button.direction = pigpio.Direction.INPUT
+pedal_button.pull = pigpio.Pull.UP
+#pedal_pressed = Debouncer(pedal_button, long_duration_ms=500, interval=0.05)
+pedal_pressed = Button(pedal_button, long_duration_ms=500, interval=0.05)
+paused = False
+
 bass_track = mixer.Sound(file='test_data/bass.wav')
 drums_track = mixer.Sound(file='test_data/drums.wav')
 vocals_track = mixer.Sound(file='test_data/vocals.wav')
@@ -81,7 +87,28 @@ bass_pixel.fill((0,(bass_color),0))
 vocals_pixel.fill((0,0,vocals_color))
 other_pixel.fill((other_color, other_color, 0))
 
+print(pedal_pressed.fell)
+
 while mixer.get_busy():
+    pedal_pressed.update()
+    if pedal_pressed.short_count:
+        if not paused:
+            mixer.pause()
+            paused = True
+            print("Pause")
+        else:
+            mixer.unpause()
+            paused = False
+            print("Unpause")
+    if pedal_pressed.long_press:
+        print("long press")
+        mixer.stop()
+        bass_track.play()
+        drums_track.play()
+        vocals_track.play()
+        other_track.play()
+
+
 #0: Drums
     # negate the position to make clockwise rotation positive
     drums_position = -drums_encoder.position
@@ -167,9 +194,10 @@ while mixer.get_busy():
     if other_button.value and other_button_held:
         other_button_held = False
 
-other_volume_before_mute=other_track.get_volume()
-other_track.set_volume(0)
+drums_pixel.fill((0,0,0))
+bass_pixel.fill((0,0,0))
+vocals_pixel.fill((0,0,0))
+other_pixel.fill((0,0,0))
 
-print(mixer.get_num_channels())
 
 mixer.quit()
