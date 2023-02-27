@@ -8,10 +8,13 @@ the most left and right rotary encoder buttons to select a song.
 
 When playing, therotary encoders you can set the volume of each channel,
 or mute it. The button is for pause/unpause and a long press for rewind.
+
+Use time with care: no pauses are good.
 '''
 
 import board
 import digitalio as pigpio
+import time
 from adafruit_seesaw import neopixel, seesaw, rotaryio, digitalio
 from adafruit_debouncer import Button
 from pygame import mixer
@@ -33,14 +36,24 @@ If you press the pedal button it starts playing the current song.
 If you press the most left or right rotary encoder buttons, it will switch tracks to the previous or next song, and show an animation.
 '''
 def standby():
+    drums_button_held = bass_button_held = vocals_button_held = other_button_held = False
     # screensaver()
     drums_pixel.fill((0,0,0))
     bass_pixel.fill((0,0,0))
     vocals_pixel.fill((0,0,0))
     other_pixel.fill((0,0,0))
     pedal_pressed.update()
-    #TODO if rotary button: next song
-    #TODO if rotary button: prev song
+    # next song
+    if not other_button.value and not other_button_held:
+        track_animation('left')
+    if other_button.value and other_button_held:
+        other_button_held = False
+    # prev song
+    if not drums_button.value and not drums_button_held:
+        track_animation('right')
+    if drums_button.value and drums_button_held:
+        drums_button_held = False
+
     if pedal_pressed.short_count:
         tracks = {
                 'drums': 'test_data/drums.wav',
@@ -159,7 +172,38 @@ def screensaver():
 Comment
 '''
 def track_animation(direction):
-    pass
+    if direction == 'left':
+        drums_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        drums_pixel.fill((0,0,0))
+        time.sleep(0.05)
+        bass_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        bass_pixel.fill((0,0,0))
+        time.sleep(0.05)
+        vocals_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        vocals_pixel.fill((0,0,0))
+        time.sleep(0.05)
+        other_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        other_pixel.fill((0,0,0))
+    else:
+        other_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        other_pixel.fill((0,0,0))
+        time.sleep(0.05)
+        vocals_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        vocals_pixel.fill((0,0,0))
+        bass_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        bass_pixel.fill((0,0,0))
+        time.sleep(0.05)
+        drums_pixel.fill((255,255,255))
+        time.sleep(0.05)
+        drums_pixel.fill((0,0,0))
+        time.sleep(0.05)
 
 
 '''
