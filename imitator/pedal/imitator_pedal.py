@@ -22,7 +22,7 @@ intensity (0-255). The first argument is the value to convert, and it
 returns the converted value.
 
 Example:
-y = _map(25, 0, 100, 0, 255)
+y = _map(25)
 '''
 def _map_vol_to_color(volume):
     return int((volume - 0) * (255 - 0) / (100 - 0) + 0)
@@ -49,8 +49,13 @@ def standby():
                 'other': 'test_data/other.wav',
         }
         playing(tracks)
+
 '''
-playing
+Function to play the audio.
+It sets a color for each channel LED.
+Uses the audio files to create the mixer channels, and starts playing.
+It handles pause/unpause, mute/unmute, rewind, and channel volume.
+It finishes working after playing, and does not return values.
 '''
 def playing(tracks):
     drums_pixel.fill((255,0,0))
@@ -74,7 +79,6 @@ def playing(tracks):
     vocals_track.play()
     other_track.play()
 
-
     while mixer.get_busy():
         pedal_pressed.update()
         if pedal_pressed.short_count:
@@ -94,56 +98,47 @@ def playing(tracks):
             vocals_track.play()
             other_track.play()
 
-
         #0: Drums
-        drums_position = -drums_encoder.position
-
-        if drums_position != drums_last_position and abs(drums_position) < 1000:
-            print(f"Drums: {drums_position, drums_last_position}")
-            if drums_position > drums_last_position:
-                if drums_volume < 100:
-                    drums_volume += 5
-                else:
-                    print("limite 100")
-            else:
-                if drums_volume > 0:
-                    drums_volume -= 5
-                else:
-                    print("limite 0")
-            drums_track.set_volume(drums_volume/100)
-            print(drums_volume/100)
-            print(drums_volume)
-            print(drums_track.get_volume())
-            drums_pixel.fill((_map_vol_to_color(drums_volume),0,0))
-            print("led: " +str((_map_vol_to_color(drums_volume))) )
-            drums_last_position = drums_position
+        drums_volume, drums_last_position = channel_volume('drums', drums_volume,
+                drums_track, drums_last_position, drums_encoder, drums_pixel)
 
         if not drums_button.value and not drums_button_held:
-            drums_mutted = channel_mute(drums_track, 'drums', drums_volume, drums_pixel, drums_mutted)
+            drums_mutted = channel_mute(drums_track, 'drums',
+                    drums_volume, drums_pixel, drums_mutted)
             drums_button_held = True
 
         if drums_button.value and drums_button_held:
             drums_button_held = False
 
         #1: Bass
+        bass_volume, bass_last_position = channel_volume('bass', bass_volume,
+                bass_track, bass_last_position, bass_encoder, bass_pixel)
         if not bass_button.value and not bass_button_held:
-            bass_mutted = channel_mute(bass_track, 'bass', bass_volume, bass_pixel, bass_mutted)
+            bass_mutted = channel_mute(bass_track, 'bass',
+                    bass_volume, bass_pixel, bass_mutted)
             bass_button_held = True
 
         if bass_button.value and bass_button_held:
             bass_button_held = False
 
         #2: Vocals
+        vocals_volume, vocals_last_position = channel_volume('vocals', vocals_volume,
+                vocals_track, vocals_last_position, vocals_encoder, vocals_pixel)
         if not vocals_button.value and not vocals_button_held:
-            vocals_mutted = channel_mute(vocals_track, 'vocals', vocals_volume, vocals_pixel, vocals_mutted)
+            vocals_mutted = channel_mute(vocals_track, 'vocals',
+                    vocals_volume, vocals_pixel, vocals_mutted)
             vocals_button_held = True
 
         if vocals_button.value and vocals_button_held:
             vocals_button_held = False
 
         #3: Other (+guitar)
+        other_volume, other_last_position = channel_volume('other', other_volume,
+                other_track, other_last_position, other_encoder, other_pixel)
+
         if not other_button.value and not other_button_held:
-            other_mutted = channel_mute(other_track, 'other', other_volume, other_pixel, other_mutted)
+            other_mutted = channel_mute(other_track, 'other',
+                    other_volume, other_pixel, other_mutted)
             other_button_held = True
 
         if other_button.value and other_button_held:
@@ -166,6 +161,21 @@ Comment
 def track_animation(direction):
     pass
 
+
+'''
+It receives a channel name, and paints the pixel depending
+of the channel name
+'''
+def paint_pixel(channel_name, channel_volume, pixel):
+    if channel_name == 'drums':
+        pixel.fill((_map_vol_to_color(channel_volume),0,0))
+    if channel_name == 'bass':
+        pixel.fill((0,_map_vol_to_color(channel_volume),0))
+    if channel_name == 'vocals':
+        pixel.fill((0, 0, _map_vol_to_color(channel_volume)))
+    if channel_name == 'other':
+        pixel.fill((_map_vol_to_color(channel_volume),_map_vol_to_color(channel_volume),0))
+
 '''
 Comment
 '''
@@ -181,22 +191,36 @@ def channel_mute(channel, channel_name, channel_volume, pixel, mutted):
         mutted = False
     if mutted:
         pixel.fill((0,0,0))
-    if not mutted and channel_name == 'drums':
-        pixel.fill((_map_vol_to_color(channel_volume),0,0))
-    if not mutted and channel_name == 'bass':
-        pixel.fill((0,_map_vol_to_color(channel_volume),0))
-    if not mutted and channel_name == 'vocals':
-        pixel.fill((0, 0, _map_vol_to_color(channel_volume)))
-    if not mutted and channel_name == 'other':
-        pixel.fill((_map_vol_to_color(channel_volume),_map_vol_to_color(channel_volume),0))
+    else:
+        paint_pixel(channel_name, channel_volume, pixel)
 
     return mutted
 
 '''
 Comment
 '''
-def channel_volume(channel):
-    pass
+def channel_volume(channel_name, channel_volume, channel_track, channel_last_position, channel_encoder, pixel):
+    channel_position = -channel_encoder.position
+
+    if channel_position != channel_last_position and abs(channel_position) < 1000:
+        if channel_position > channel_last_position:
+            if channel_volume < 100:
+                channel_volume += 5
+            else:
+                print("limite 100")
+        else:
+            if channel_volume > 0:
+                channel_volume -= 5
+            else:
+                print("limite 0")
+        channel_track.set_volume(channel_volume/100)
+        print(channel_volume/100)
+        print(channel_volume)
+        print(channel_track.get_volume())
+        print("led: " +str((_map_vol_to_color(channel_volume))) )
+        channel_last_position = channel_position
+        paint_pixel(channel_name, channel_volume, pixel)
+    return channel_volume, channel_last_position
 
 i2c = board.I2C()
 
