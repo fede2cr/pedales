@@ -37,31 +37,42 @@ If you press the most left or right rotary encoder buttons, it will switch track
 '''
 def standby():
     drums_button_held = bass_button_held = vocals_button_held = other_button_held = False
+    media_dir = '/home/imitator/imitator-media/'
+    tracks_available = [ { # TODO: hardcode
+            'drums': media_dir + 'strut/drums.wav',
+            'bass': media_dir + 'strut/bass.wav',
+            'vocals': media_dir + 'strut/vocals.wav',
+            'other': media_dir + 'strut/other.wav', 
+        },
+        {
+            'drums': media_dir + 'revolution/drums.wav',
+            'bass': media_dir + 'revolution/bass.wav',
+            'vocals': media_dir + 'revolution/vocals.wav',
+            'other': media_dir + 'revolution/other.wav', 
+        } ]
+    selected_track = 0
     # screensaver()
     drums_pixel.fill((0,0,0))
     bass_pixel.fill((0,0,0))
     vocals_pixel.fill((0,0,0))
     other_pixel.fill((0,0,0))
-    pedal_pressed.update()
-    # next song
-    if not other_button.value and not other_button_held:
-        track_animation('left')
-    if other_button.value and other_button_held:
-        other_button_held = False
-    # prev song
-    if not drums_button.value and not drums_button_held:
-        track_animation('right')
-    if drums_button.value and drums_button_held:
-        drums_button_held = False
-
-    if pedal_pressed.short_count:
-        tracks = {
-                'drums': 'test_data/drums.wav',
-                'bass': 'test_data/bass.wav',
-                'vocals': 'test_data/vocals.wav',
-                'other': 'test_data/other.wav',
-        }
-        playing(tracks)
+    while True:
+        pedal_pressed.update()
+        # next song
+        if not other_button.value and not other_button_held:
+            selected_track = ((selected_track+1) % len(tracks_available))
+            track_animation('left')
+        if other_button.value and other_button_held:
+            other_button_held = False
+        # prev song
+        if not drums_button.value and not drums_button_held:
+            selected_track = ((selected_track-1) % len(tracks_available))
+            track_animation('right')
+        if drums_button.value and drums_button_held:
+            drums_button_held = False
+        print(selected_track, tracks_available[selected_track])
+        if pedal_pressed.short_count:
+            playing(tracks_available[selected_track])
 
 '''
 Function to play the audio.
@@ -296,9 +307,8 @@ other_encoder = rotaryio.IncrementalEncoder(other_ss)
 pedal_button = pigpio.DigitalInOut(board.D21)
 pedal_button.direction = pigpio.Direction.INPUT
 pedal_button.pull = pigpio.Pull.UP
-pedal_pressed = Button(pedal_button, long_duration_ms=500, interval=0.05)
+pedal_pressed = Button(pedal_button, long_duration_ms=500, interval=0.01)
 
 
 
-while True:
-    standby()
+standby()
