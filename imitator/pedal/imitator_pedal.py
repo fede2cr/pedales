@@ -14,6 +14,7 @@ Use time with care: no pauses are good.
 
 import board
 import digitalio as pigpio
+import os
 import time
 from adafruit_seesaw import neopixel, seesaw, rotaryio, digitalio
 from adafruit_debouncer import Button
@@ -42,22 +43,23 @@ def standby():
             'drums': media_dir + 'strut/drums.wav',
             'bass': media_dir + 'strut/bass.wav',
             'vocals': media_dir + 'strut/vocals.wav',
-            'other': media_dir + 'strut/other.wav', 
+            'other': media_dir + 'strut/other.wav',
         },
         {
             'drums': media_dir + 'revolution/drums.wav',
             'bass': media_dir + 'revolution/bass.wav',
             'vocals': media_dir + 'revolution/vocals.wav',
-            'other': media_dir + 'revolution/other.wav', 
+            'other': media_dir + 'revolution/other.wav',
         } ]
     selected_track = 0
-    # screensaver()
     drums_pixel.fill((0,0,0))
     bass_pixel.fill((0,0,0))
     vocals_pixel.fill((0,0,0))
     other_pixel.fill((0,0,0))
+    drums_button_held = vocals_button_held = bass_button_held = other_button_held = False
     while True:
         pedal_pressed.update()
+        screensaver()
         # next song
         if not other_button.value and not other_button_held:
             selected_track = ((selected_track+1) % len(tracks_available))
@@ -70,9 +72,12 @@ def standby():
             track_animation('right')
         if drums_button.value and drums_button_held:
             drums_button_held = False
-        print(selected_track, tracks_available[selected_track])
+        if not vocals_button.value and not vocals_button_held and not bass_button.value and not bass_button_held:
+            print("shutdown")
+            os.system("sudo poweroff")
         if pedal_pressed.short_count:
             playing(tracks_available[selected_track])
+
 
 '''
 Function to play the audio.
@@ -177,7 +182,10 @@ def playing(tracks):
 Comment
 '''
 def screensaver():
-    pass
+    drums_pixel.fill((50,50,50))
+    bass_pixel.fill((50,50,50))
+    vocals_pixel.fill((50,50,50))
+    other_pixel.fill((50,50,50))
 
 '''
 Comment
@@ -263,16 +271,22 @@ def channel_volume(channel_name, channel_volume, channel_track, channel_last_pos
                 channel_volume += 5
             else:
                 print("limite 100")
+                for _ in range(3):
+                    pixel.fill((0,0,0))
+                    time.sleep(0.05)
+                    paint_pixel(channel_name, channel_volume, pixel)
+                    time.sleep(0.05)
         else:
             if channel_volume > 0:
                 channel_volume -= 5
             else:
                 print("limite 0")
+                for _ in range(3):
+                    paint_pixel(channel_name, 100, pixel)
+                    time.sleep(0.05)
+                    pixel.fill((0,0,0))
+                    time.sleep(0.05)
         channel_track.set_volume(channel_volume/100)
-        print(channel_volume/100)
-        print(channel_volume)
-        print(channel_track.get_volume())
-        print("led: " +str((_map_vol_to_color(channel_volume))) )
         channel_last_position = channel_position
         paint_pixel(channel_name, channel_volume, pixel)
     return channel_volume, channel_last_position
