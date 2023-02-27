@@ -33,14 +33,15 @@ If you press the pedal button it starts playing the current song.
 If you press the most left or right rotary encoder buttons, it will switch tracks to the previous or next song, and show an animation.
 '''
 def standby():
+    # screensaver()
+    drums_pixel.fill((0,0,0))
+    bass_pixel.fill((0,0,0))
+    vocals_pixel.fill((0,0,0))
+    other_pixel.fill((0,0,0))
     pedal_pressed.update()
     #TODO if rotary button: next song
     #TODO if rotary button: prev song
     if pedal_pressed.short_count:
-        drums_pixel.fill((255,0,0))
-        bass_pixel.fill((0,255,0))
-        vocals_pixel.fill((0,0,255))
-        other_pixel.fill((255, 255, 0))
         tracks = {
                 'drums': 'test_data/drums.wav',
                 'bass': 'test_data/bass.wav',
@@ -48,38 +49,20 @@ def standby():
                 'other': 'test_data/other.wav',
         }
         playing(tracks)
-        drums_pixel.fill((0,0,0))
-        bass_pixel.fill((0,0,0))
-        vocals_pixel.fill((0,0,0))
-        other_pixel.fill((0,0,0))
-
-        mixer.quit()
 '''
 playing
 '''
 def playing(tracks):
-    drums_pixel.brightness = 0.5
-    drums_button_held = False
-    drums_last_position = 0
-    drums_mutted = False
-    drums_volume = 100
-    bass_pixel.brightness = 0.5
-    bass_button_held = False
-    bass_last_position = 0
-    bass_mutted = False
-    bass_volume = 100
-    vocals_button_held = False
-    vocals_pixel.brightness = 0.5
-    vocals_last_position = 0
-    vocals_mutted = False
-    vocals_volume = 100
-    other_pixel.brightness = 0.5
-    other_button_held = False
-    other_last_position = 0
-    other_mutted = False
-    other_volume = 100
-
+    drums_pixel.fill((255,0,0))
+    bass_pixel.fill((0,255,0))
+    vocals_pixel.fill((0,0,255))
+    other_pixel.fill((255, 255, 0))
+    drums_button_held = bass_button_held = vocals_button_held = other_button_held = False
+    drums_last_position = bass_last_position = vocals_last_position = other_last_position = 0
+    drums_mutted = bass_mutted = other_mutted = vocals_mutted = False
+    drums_volume = bass_volume = vocals_volume = other_volume = 100
     paused = False
+
     mixer.init()
     drums_track = mixer.Sound(file=tracks['drums'])
     bass_track = mixer.Sound(file=tracks['bass'])
@@ -119,12 +102,12 @@ def playing(tracks):
             print(f"Drums: {drums_position, drums_last_position}")
             if drums_position > drums_last_position:
                 if drums_volume < 100:
-                    drums_volume += 2
+                    drums_volume += 5
                 else:
                     print("limite 100")
             else:
                 if drums_volume > 0:
-                    drums_volume -= 2
+                    drums_volume -= 5
                 else:
                     print("limite 0")
             drums_track.set_volume(drums_volume/100)
@@ -165,8 +148,11 @@ def playing(tracks):
 
         if other_button.value and other_button_held:
             other_button_held = False
-
-
+    mixer.quit()
+    drums_pixel.fill((0,0,0))
+    bass_pixel.fill((0,0,0))
+    vocals_pixel.fill((0,0,0))
+    other_pixel.fill((0,0,0))
 
 '''
 Comment
@@ -190,7 +176,7 @@ def channel_mute(channel, channel_name, channel_volume, pixel, mutted):
         mutted = True
         pixel.fill((0,0,0))
     else:
-        print(channel_name + "un-mutted")
+        print(channel_name + " un-mutted")
         channel.set_volume(channel_volume)
         mutted = False
     if mutted:
