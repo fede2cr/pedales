@@ -62,7 +62,7 @@ def playing(tracks):
     drums_button_held = False
     drums_last_position = 0
     drums_mutted = False
-    drums_volume = 102
+    drums_volume = 100
     bass_pixel.brightness = 0.5
     bass_button_held = False
     bass_last_position = 0
@@ -136,17 +136,7 @@ def playing(tracks):
             drums_last_position = drums_position
 
         if not drums_button.value and not drums_button_held:
-            if not drums_mutted:
-                drums_volume=drums_track.get_volume()
-                print("Drums mutted")
-                drums_track.set_volume(0)
-                drums_mutted = True
-                drums_pixel.fill((0,0,0))
-            else:
-                print("Drums un-mutted")
-                drums_track.set_volume(drums_volume)
-                drums_mutted = False
-                drums_pixel.fill((_map_vol_to_color(drums_volume),0,0))
+            drums_mutted = channel_mute(drums_track, 'drums', drums_volume, drums_pixel, drums_mutted)
             drums_button_held = True
 
         if drums_button.value and drums_button_held:
@@ -154,17 +144,7 @@ def playing(tracks):
 
         #1: Bass
         if not bass_button.value and not bass_button_held:
-            if not bass_mutted:
-                bass_volume=bass_track.get_volume()
-                print("Bass mutted")
-                bass_track.set_volume(0)
-                bass_mutted = True
-                bass_pixel.fill((0,0,0))
-            else:
-                print("Bass un-mutted")
-                bass_track.set_volume(bass_volume)
-                bass_mutted = False
-                bass_pixel.fill((0,(bass_color),0))
+            bass_mutted = channel_mute(bass_track, 'bass', bass_volume, bass_pixel, bass_mutted)
             bass_button_held = True
 
         if bass_button.value and bass_button_held:
@@ -172,17 +152,7 @@ def playing(tracks):
 
         #2: Vocals
         if not vocals_button.value and not vocals_button_held:
-            if not vocals_mutted:
-                vocals_volume=vocals_track.get_volume()
-                print("Vocals mutted")
-                vocals_track.set_volume(0)
-                vocals_mutted = True
-                vocals_pixel.fill((0,0,0))
-            else:
-                print("Vocals un-mutted")
-                vocals_track.set_volume(vocals_volume)
-                vocals_mutted = False
-                vocals_pixel.fill((0,0,vocals_color))
+            vocals_mutted = channel_mute(vocals_track, 'vocals', vocals_volume, vocals_pixel, vocals_mutted)
             vocals_button_held = True
 
         if vocals_button.value and vocals_button_held:
@@ -190,17 +160,7 @@ def playing(tracks):
 
         #3: Other (+guitar)
         if not other_button.value and not other_button_held:
-            if not other_mutted:
-                other_volume=other_track.get_volume()
-                print("Other mutted")
-                other_track.set_volume(0)
-                other_mutted = True
-                other_pixel.fill((0,0,0))
-            else:
-                print("Other un-mutted")
-                other_track.set_volume(other_volume)
-                other_mutted = False
-                other_pixel.fill((other_color, other_color, 0))
+            other_mutted = channel_mute(other_track, 'other', other_volume, other_pixel, other_mutted)
             other_button_held = True
 
         if other_button.value and other_button_held:
@@ -223,8 +183,28 @@ def track_animation(direction):
 '''
 Comment
 '''
-def channel_mute(channel, state):
-    pass
+def channel_mute(channel, channel_name, channel_volume, pixel, mutted):
+    if not mutted:
+        print(channel_name + " mutted")
+        channel.set_volume(0)
+        mutted = True
+        pixel.fill((0,0,0))
+    else:
+        print(channel_name + "un-mutted")
+        channel.set_volume(channel_volume)
+        mutted = False
+    if mutted:
+        pixel.fill((0,0,0))
+    if not mutted and channel_name == 'drums':
+        pixel.fill((_map_vol_to_color(channel_volume),0,0))
+    if not mutted and channel_name == 'bass':
+        pixel.fill((0,_map_vol_to_color(channel_volume),0))
+    if not mutted and channel_name == 'vocals':
+        pixel.fill((0, 0, _map_vol_to_color(channel_volume)))
+    if not mutted and channel_name == 'other':
+        pixel.fill((_map_vol_to_color(channel_volume),_map_vol_to_color(channel_volume),0))
+
+    return mutted
 
 '''
 Comment
