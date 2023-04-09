@@ -1,19 +1,17 @@
 # pedales
 
-## Intro
+Algunos pedales para Figueroa Lab.
 
-Hacer pedales de guitarra, bajo y otros instrumentos, es sencillo.
+- [Imitator](https://github.com/fede2cr/pedales/tree/master/imitator)
 
-Solo necesita aprender a soldar y a ensamblar componentes teniendo un poco de cuidado. Poco a poco iremos experimentando en cambiar compomentes en los diseños y observando la función de los diferentes transistores, capacitores y resistencias que componen estos sencillos circuitos.
+Utiliza demucs para separar cualquier canción en voz, percusión, bajo y otros (guitarras, teclados, vientos, etc) y luego con los controles del pedal podemos realizar una mezcla en vivo, o eliminar uno o varios instrumentos.
 
-Todos los diseños que usaremos con ejemplos clásicos de pedales, disponibles en múltiples foros en Internet y en libros especializados.
+Esto le permite ser un pedal de "super-karaoke", ya que podemos eliminar la voz para usarlo como un karaoke tradicional, así como también eliminar una guitarra, o la batería o el bajo; para practicar encima de tu canción preferida
 
-Lista de pedales:
+[![Imitator demo](https://img.youtube.com/vi/_IGj-wyZRRc/default.jpg)](https://youtu.be/_IGj-wyZRRc)
 
-- [Amplificador LM386](https://github.com/fede2cr/pedales/tree/master/ampli-lm386)
+## Software libre y hardware libre
 
-![Prototipo de Amplificador LM386](https://github.com/fede2cr/pedales/blob/master/ampli-lm386/img/prototipo%20ampli-lm386.jpg)
 
-- [Bazz Fuss](https://github.com/fede2cr/pedales/tree/master/bazz%20fuss)
+Todos los pedales diseñados son software libre y hardware libre, lo que quiere decir que tanto la manera como han sido programados, así como los componentes y la forma en como se conectan, es información que acompaña a estos pedales. De forma que puedan ser reparados, mejorados y copiados; solo se solicita que los cambios también sean publicados de manera que toda la comunidad de pedales pueda avanzar al mismo tiempo. 
 
-![Prototipo de Bazz Fuss](https://github.com/fede2cr/pedales/blob/master/bazz%20fuss/img/prototipo%20bazz%20fuss.jpg)
