@@ -20,9 +20,21 @@ Es un pedal que funciona como teclado bluetooth, por lo que lo puedes conectar c
 
 Con esto puedes controlar de manera sencilla aplicaciones como youtube, tu estación de audio favorita, pasar la página de una partitura en la tableta, y muchas otras funciones. Puedes agregar tus propias combinaciones de teclas de manera muy sencilla, así como enlazar varios pedales para pasar la página de la partitura para todos los músicos en escenario.
 
+![Guatusa](/doc/img/guatusa.jpg)
+
 - [Chicharra](https://github.com/fede2cr/pedales/tree/master/chicharra)
 
 Un trémolo versatil, ya que puedes usar los modos predefinidos, pero también puedes agregar diferentes formas de modular tu trémolo, y hacerlo que suene como una chicharra si así lo deseas.
+
+![Chicharra](/doc/img/chicharra-top.jpg)
+
+## Jícaras
+
+Los pedales no utilizan cajas de metal como el resto de pedales, sino que pensando en revitalizar técnicas artesanales indígenas y buscando maneras creativas para tener un menor impacto sobre la huella de carbono, estos pedales son construídos de manera artesanal utilizando jícaras como la base estructural de los pedales.
+
+Todos los pedales van a incluír esta historieta que explica la relevancia de la Jícara en el libro sagrado *Popol Vuh*, y estamos en progreso de recolectar otras historias indígenas de culturas de Costa Rica para difundir esta importante pero olvidada especie.
+
+![Ixquic y las jícaras - Extrato del Popol Vuh](/doc/Ixquic_y_las_jícaras.pdf)
 
 ## Software libre y hardware libre
 
