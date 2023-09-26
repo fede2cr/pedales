@@ -29,4 +29,4 @@ tqdm==4.64.1
 treetable==0.2.5
 typing_extensions==4.5.0
 websockets==10.4
-yt-dlp==2023.7.6
+yt-dlp==2023.9.24
