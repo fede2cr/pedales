@@ -14,6 +14,12 @@ It has one button to control with short presses (play/pause), four rotary encode
 
 With this pedal you can plug it separately to a PA or speakers two have better audio quality, or directly to your amp with a pedal like [JHS Summing Amp](https://www.jhspedals.info/summing-amp) and play it straight to your amp. You can also use something like [TC Electronic Wiretap](https://www.tcelectronic.com/product.html?modelCode=P0CM1) to record only your guitar part if used after your pedal chain, or to record the complete song if used after the imitator pedal.
 
+## Workflow
+
+The pedal will start with a "fire" screensaver to indicate that it is ready to be used. While in this mode, you can press the pedal button to start playing, or the most left or right buttons to switch to a previous or next song.
+
+Once it is in play mode, you can press the pedal button for pause/unpause, press the rotary encoder buttons to mute a channel, or turn their knobs to change the channel volume. Once it finish playing a song, it will get back to standby mode with the screensaver.
+
 ## Limitations
 
 ### Guitar and other instruments
@@ -21,7 +27,3 @@ With this pedal you can plug it separately to a PA or speakers two have better a
 The un-mix technology is provided by the free software from Facebook called [demucs](https://github.com/facebookresearch/demucs) which currently splits the audio in four channels: voice, bass, drums and **others**. This means that the guitar audio will be split combined with other instruments such as keyboards, winds, brass and others, which means that some songs that have heavy use of this sounds, will have it removed if you mute the "guitar" (called "others") channel.
 
 There is experimental training that can be used to teach the demucs software to remove only the guitar, but it does not work as good as it does for bass, drums or vocals.
-
-### Rotary encoders
-
-Also, the rotary encoders can only read when they change, not where they are. So it is recommended that before starting a playing session, to turn the knobs to "12" to indicate 100% volume.
