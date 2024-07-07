@@ -9,7 +9,7 @@ def download_video(video_id: str):
     ydl_opts = {
         'format': 'vorbis/bestaudio/best',
         'quiet': 'True',
-        'outtmpl': '{}.ogg'.format(video_id),
+        'outtmpl': f'{video_id}.%(ext)s',
         'restrictfilename': 'True',
         'postprocessors': [{
         'key': 'FFmpegExtractAudio',
